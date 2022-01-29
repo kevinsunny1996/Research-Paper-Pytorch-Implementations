@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-import torchvision.transforms as TF
+import torchvision.transforms.functional as TF
 
 class DoubleConv(nn.Module):
     def __init__(self, in_channels, out_channels):
@@ -10,9 +10,9 @@ class DoubleConv(nn.Module):
             nn.Conv2d(in_channels, out_channels, 3, 1, 1, bias=False),
             nn.BatchNorm2d(out_channels),
             nn.ReLU(inplace=True),
-            nn.Conv2d(in_channels, out_channels, 3, 1, 1, bias=False),
+            nn.Conv2d(out_channels, out_channels, 3, 1, 1, bias=False),
             nn.BatchNorm2d(out_channels),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=True),
         )
     
     def forward(self, x):
@@ -24,7 +24,7 @@ class UNET(nn.Module):
     2. Create a features list containing the channels that will be used per layer as part of the contraction, same for expansion.
     '''
     def __init__(
-        self, in_channels=3, out_channels=1, features=[64, 128, 256, 512]
+        self, in_channels=3, out_channels=1, features=[64, 128, 256, 512],
     ):
         super(UNET, self).__init__()
         '''
@@ -48,7 +48,7 @@ class UNET(nn.Module):
             # Upsample the expansion part of UNEt
             self.ups.append(
                 nn.ConvTranspose2d(
-                    feature*2, feature, kernel_size=2, stride=2
+                    feature*2, feature, kernel_size=2, stride=2,
                     )
             )
             # Perform the double conv to complete one step
@@ -88,7 +88,7 @@ class UNET(nn.Module):
                 x = TF.resize(x, size=skip_connection.shape[2:])
 
             # Concat along channel dim
-            concat_skip = torch.concat((skip_connection, x), dim=1)
+            concat_skip = torch.cat((skip_connection, x), dim=1)
             # Running the output through double conv (ups[0] = Transpose Conv Layer, ups[1] = Double Conv layer)
             x = self.ups[idx+1](concat_skip)
         
@@ -97,7 +97,7 @@ class UNET(nn.Module):
 
 def test():
     # kernel_size, stride, input height and width
-    x = torch.randn((3, 1, 160, 160))
+    x = torch.randn((3, 1, 161, 161))
     model = UNET(in_channels=1, out_channels=1)
 
     preds = model(x)
@@ -106,5 +106,5 @@ def test():
 
     assert preds.shape == x.shape
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     test()

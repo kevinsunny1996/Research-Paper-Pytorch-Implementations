@@ -130,3 +130,6 @@ dmypy.json
 
 # venv files
 research_impl/*
+
+# Dataset file
+unet_pytorch/Carvana/*

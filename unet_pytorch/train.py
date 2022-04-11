@@ -22,13 +22,14 @@ NUM_WORKERS = 2
 IMAGE_HEIGHT = 160
 IMAGE_WIDTH = 240
 PIN_MEMORY = True
-LOAD_MODEL = True
-TRAIN_IMG_DIR = 'Carvana/train_images'
-TRAIN_MASK_DIR = 'Carvana/train_masks'
-VAL_IMG_DIR = 'Carvana/val_images'
-VAL_MASK_DIR = 'Carvana/val_masks'
+LOAD_MODEL = False
+TRAIN_IMG_DIR = 'Carvana/train_images/'
+TRAIN_MASK_DIR = 'Carvana/train_masks/'
+VAL_IMG_DIR = 'Carvana/val_images/'
+VAL_MASK_DIR = 'Carvana/val_masks/'
 
 def train_fn(loader, model, optimizer, loss_fn, scaler):
+    # sourcery skip: remove-unused-enumerate
     loop = tqdm(loader)
 
     for batch_idx , (data, targets) in enumerate(loop):
@@ -49,7 +50,7 @@ def train_fn(loader, model, optimizer, loss_fn, scaler):
         # Update tqdm loop
         loop.set_postfix(loss=loss.item())
 
-def main():
+def main():  # sourcery skip: for-index-underscore
     train_transform = A.Compose(
         [
             A.Resize(height=IMAGE_HEIGHT, width=IMAGE_WIDTH),
@@ -125,22 +126,3 @@ if __name__ == '__main__':
     main()
 
 
-'''
-n/Research-Paper-Pytorch-Implementations/research_impl/bin/python /home/kevin/Research-Paper-Pytorch-Implementations/unet_pytorch/train.py
-/home/kevin/Research-Paper-Pytorch-Implementations/research_impl/lib/python3.9/site-packages/torch/cuda/__init__.py:143: UserWarning: 
-NVIDIA GeForce RTX 3060 Laptop GPU with CUDA capability sm_86 is not compatible with the current PyTorch installation.
-The current PyTorch install supports CUDA capabilities sm_37 sm_50 sm_60 sm_70.
-If you want to use the NVIDIA GeForce RTX 3060 Laptop GPU GPU with PyTorch, please check the instructions at https://pytorch.org/get-started/locally/
-
-  warnings.warn(incompatible_device_warn.format(device_name, capability, " ".join(arch_list), device_name))
-Traceback (most recent call last):
-  File "/home/kevin/Research-Paper-Pytorch-Implementations/unet_pytorch/train.py", line 125, in <module>
-    main()
-  File "/home/kevin/Research-Paper-Pytorch-Implementations/unet_pytorch/train.py", line 87, in main
-    train_loader, val_loader = get_loaders(
-  File "/home/kevin/Research-Paper-Pytorch-Implementations/unet_pytorch/utils.py", line 26, in get_loaders
-    train_ds = CarvanaDataset(
-  File "/home/kevin/Research-Paper-Pytorch-Implementations/unet_pytorch/dataset.py", line 13, in __init__
-    self.images = os.listdir(image_dir)
-FileNotFoundError: [Errno 2] No such file or directory: 'Carvana/train_images'
-'''

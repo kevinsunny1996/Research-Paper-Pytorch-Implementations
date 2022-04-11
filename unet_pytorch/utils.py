@@ -9,7 +9,7 @@ def save_checkpoint(state, filename='my_checkpoint.pth.tar'):
 
 def load_checkpoint(checkpoint, model):
     print('Loading checkpoint ->')
-    model.load(checkpoint['state_dict'])\
+    model.load(checkpoint['state_dict'])
 
 def get_loaders(
     train_dir,

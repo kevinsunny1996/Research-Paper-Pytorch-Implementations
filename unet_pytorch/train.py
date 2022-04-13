@@ -1,6 +1,6 @@
 import torch
 import albumentations as A
-from albumentations.pytorch import ToTensorV2
+from albumentations.pytorch.transforms import ToTensorV2
 from tqdm import tqdm
 import torch.nn as nn
 import torch.optim as optim
@@ -12,6 +12,10 @@ from utils import (
     check_accuracy,
     save_predictions_as_imgs
 )
+
+import faulthandler
+
+faulthandler.enable()
 
 # Hyperparams
 LEARNING_RATE = 1e-4
